@@ -1,0 +1,20 @@
+youtubedlapi-server-infusiblecoder
+
+
+testPYPItoken=pypi-AgENdGVzdC5weXBpLm9yZwIkMzZiYjAyYTUtMzMxMy00MDdlLTliZTQtZjZkMGRhZjViNzBkAAIleyJwZXJtaXNzaW9ucyI6ICJ1c2VyIiwgInZlcnNpb24iOiAxfQAABiDyRLz0Ufs-u1numTftDDp77LRZE0XSE5w3UZgUaO6EPA
+
+
+[testpypi]
+  username = __token__
+  password = pypi-AgENdGVzdC5weXBpLm9yZwIkMzZiYjAyYTUtMzMxMy00MDdlLTliZTQtZjZkMGRhZjViNzBkAAIleyJwZXJtaXNzaW9ucyI6ICJ1c2VyIiwgInZlcnNpb24iOiAxfQAABiDyRLz0Ufs-u1numTftDDp77LRZE0XSE5w3UZgUaO6EPA
+
+
+
+
+
+token=pypi-AgEIcHlwaS5vcmcCJDNjMjNhNjkyLTUyYjMtNDFiNy1iZmJjLTYwYzg4MDM4MjU4OQACJXsicGVybWlzc2lvbnMiOiAidXNlciIsICJ2ZXJzaW9uIjogMX0AAAYgFig1ainD55w1KQRr3AAYmDl-B-CKL4HoO69b2e-4RMw
+
+
+[pypi]
+  username = __token__
+  password = pypi-AgEIcHlwaS5vcmcCJDNjMjNhNjkyLTUyYjMtNDFiNy1iZmJjLTYwYzg4MDM4MjU4OQACJXsicGVybWlzc2lvbnMiOiAidXNlciIsICJ2ZXJzaW9uIjogMX0AAAYgFig1ainD55w1KQRr3AAYmDl-B-CKL4HoO69b2e-4RMw

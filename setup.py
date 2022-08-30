@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='youtubedlapi_server_infusiblecoder',
-    version='1.9',
+    version='2.5',
     description='An API server based on youtube_dl',
     long_description='Get the videos from different sites using a server running youtube_dl',
     author='Syed Usama Ahmad',
@@ -19,7 +19,7 @@ setup(
 
     install_requires=[
         'Flask',
-        'yt_dlp >= 2022.3.8.2',
+        'yt_dlp >= 2022.8.19',
     ],
 
     classifiers=[

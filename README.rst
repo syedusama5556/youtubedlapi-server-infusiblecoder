@@ -8,3 +8,10 @@ About
 -----
 
 ``youtubedlapi-server-infusiblecoder`` is released to the public domain, read the `license <LICENSE>`_ for more info.
+
+
+Example
+-----
+
+youtubedlapi-server-infusiblecoder -p 8000 --host 127.0.0.1 --number-processes 1
+

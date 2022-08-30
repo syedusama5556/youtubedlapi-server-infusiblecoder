@@ -176,7 +176,7 @@ def list_extractors():
 @set_access_control
 def version():
     result = {
-        'youtube-dl': '2022.3.8.2',
+        'youtube-dl': '2022.8.19',
         'youtube-dl-api-server': __version__,
     }
     return jsonify(result)
