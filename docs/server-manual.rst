@@ -24,3 +24,8 @@ Run the API server
 .. option:: --version
 
     Print the version of the server
+    
+.. option:: final example
+
+    youtubedlapi-server-infusiblecoder -p 8000 --host 127.0.0.1 --number-processes 1
+
