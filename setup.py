@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='youtubedlapi_server_infusiblecoder',
-    version='2.5',
+    version='2.6',
     description='An API server based on youtube_dl',
     long_description='Get the videos from different sites using a server running youtube_dl',
     author='Syed Usama Ahmad',
