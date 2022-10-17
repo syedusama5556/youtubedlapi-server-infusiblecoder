@@ -15,3 +15,7 @@ Example
 
 youtubedlapi-server-infusiblecoder -p 8000 --host 127.0.0.1 --number-processes 1
 
+or
+
+youtubedlapi-server-infusiblecoder -p 9191 --host 0.0.0.0 --number-processes 1
+
