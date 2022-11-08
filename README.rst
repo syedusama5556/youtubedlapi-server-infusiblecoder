@@ -19,3 +19,7 @@ or
 
 youtubedlapi-server-infusiblecoder -p 9191 --host 0.0.0.0 --number-processes 1
 
+or for bg run 
+
+nohup youtubedlapi-server-infusiblecoder -p 9191 --host 0.0.0.0 --number-processes 1 &
+
