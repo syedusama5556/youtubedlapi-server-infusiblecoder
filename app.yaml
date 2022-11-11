@@ -22,7 +22,7 @@ libraries:
 - name: ssl
   version: latest
 - name: jinja2
-  version: "2.6"
+  version: "2.7"
 
 
 skip_files:
