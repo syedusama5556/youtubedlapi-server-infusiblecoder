@@ -10,7 +10,7 @@ from .version import __version__
 
 def main():
     desc = """
-           The youtube-dl API server.
+           The yt-dlp API server.
            """
 
     parser = argparse.ArgumentParser(description=desc)

@@ -28,7 +28,7 @@ def get_videos(url, extra_params):
     ydl_params = {
         'format': 'best',
         'cachedir': False,
-        'logger': current_app.logger.getChild('youtube-dl'),
+        'logger': current_app.logger.getChild('yt-dlp'),
     }
     ydl_params.update(extra_params)
     ydl = SimpleYDL(ydl_params)
