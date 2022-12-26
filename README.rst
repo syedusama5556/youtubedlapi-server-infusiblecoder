@@ -1,3 +1,9 @@
+[![Downloads](https://pepy.tech/badge/youtubedlapi-server-infusiblecoder)](https://pepy.tech/project/youtubedlapi-server-infusiblecoder)
+[![Downloads](https://pepy.tech/badge/youtubedlapi-server-infusiblecoder/month)](https://pepy.tech/project/youtubedlapi-server-infusiblecoder/month)
+[![Downloads](https://pepy.tech/badge/youtubedlapi-server-infusiblecoder/week)](https://pepy.tech/project/youtubedlapi-server-infusiblecoder/week)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://img.shields.io/badge/License-MIT-blue.svg)
+
+
 youtubedlapi-server-infusiblecoder
 =====================
 
