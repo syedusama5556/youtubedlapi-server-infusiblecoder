@@ -13,19 +13,19 @@ The installation instructions and the documentation are available at [Read the D
 About
 -----
 
-``youtubedlapi-server-infusiblecoder`` is released to the public domain, read the [License] (LICENSE.md)_ for more info.
+``youtubedlapi-server-infusiblecoder`` is released to the public domain, read the [License](https://raw.githubusercontent.com/syedusama5556/youtubedlapi-server-infusiblecoder/master/LICENSE.md) for more info.
 
 
 Example
 -----
 
-youtubedlapi-server-infusiblecoder -p 8000 --host 127.0.0.1 --number-processes 1
+``youtubedlapi-server-infusiblecoder -p 8000 --host 127.0.0.1 --number-processes 1``
 
 or
 
-youtubedlapi-server-infusiblecoder -p 9191 --host 0.0.0.0 --number-processes 1
+``youtubedlapi-server-infusiblecoder -p 9191 --host 0.0.0.0 --number-processes 1``
 
-or for bg run 
+or for running in bacground 
 
-nohup youtubedlapi-server-infusiblecoder -p 9191 --host 0.0.0.0 --number-processes 1 &
+``nohup youtubedlapi-server-infusiblecoder -p 9191 --host 0.0.0.0 --number-processes 1 &``
 
