@@ -8,7 +8,9 @@ import yt_dlp
 
 from yt_dlp import YoutubeDL
 from .version import __version__
-
+import subprocess
+import os
+import json
 
 if not hasattr(sys.stderr, 'isatty'):
     # In GAE it's not defined and we must monkeypatch
@@ -144,22 +146,49 @@ def get_result():
 @set_access_control
 def info():
     url = request.args['url']
-    result = get_result()
-    key = 'info'
-    if query_bool(request.args.get('flatten'), 'flatten', False):
-        result = flatten_result(result)
-        key = 'videos'
-    result = {
-        'url': url,
-        key: result,
-    }
-    return jsonify(result)
-
+    if 'instagram.com' in url or 'fb.watch' in url or 'facebook.com' in url:
+        result = subprocess.run(["yt-dlp", "--dump-json", "--no-cache-dir", str(url)], stdout=subprocess.PIPE, shell=True, encoding='utf-8')
+        result = json.loads(result.stdout)
+        key = 'info'
+        if query_bool(request.args.get('flatten'), 'flatten', False):
+            result = flatten_result(result)
+            key = 'videos'
+        result = {
+            'url': url,
+            key: result,
+        }
+        return jsonify(result)
+    else:  
+        result = get_result()
+        key = 'info'
+        if query_bool(request.args.get('flatten'), 'flatten', False):
+            result = flatten_result(result)
+            key = 'videos'
+        result = {
+            'url': url,
+            key: result,
+        }
+        return jsonify(result)
+ 
 
 @route_api('play')
 def play():
     result = flatten_result(get_result())
     return redirect(result[0]['url'])
+
+
+# def getInsta(url):
+#     result = subprocess.run(["yt-dlp", "--dump-json", "--no-cache-dir", str(url)], stdout=subprocess.PIPE, shell=True, encoding='utf-8')
+#     result = json.loads(result.stdout)
+#     key = 'info'
+#     if query_bool(request.args.get('flatten'), 'flatten', False):
+#         result = flatten_result(result)
+#         key = 'videos'
+#     result = {
+#         'url': url,
+#         key: result,
+#     }
+#     return jsonify(result)
 
 
 @route_api('extractors')
