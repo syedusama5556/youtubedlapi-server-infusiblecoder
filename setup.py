@@ -2,11 +2,17 @@
 
 from setuptools import setup
 
+# read the contents of your README file
+from pathlib import Path
+this_directory = Path(__file__).parent
+long_description_txt = (this_directory / "README.md").read_text()
+
 setup(
     name='youtubedlapi_server_infusiblecoder',
-    version='3.0',
+    version='3.1',
     description='An API server based on yt-dlp',
-    long_description='A REST API server for getting the info for videos from different sites, powered by yt-dlp',
+    long_description=long_description_txt,
+    long_description_content_type='text/markdown',
     author='Syed Usama Ahmad',
     author_email='syedusama5556@gmail.com',
     url='https://github.com/syedusama5556/youtubedlapi-server-infusiblecoder',
