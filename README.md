@@ -31,3 +31,18 @@ or for running in bacground
 
 ``nohup youtubedlapi-server-infusiblecoder -p 9191 --host 0.0.0.0 --number-processes 1 &``
 
+Run in BG with A Repeted Job To Restart Server When Its Down
+------------------------------------------------------------
+
+create a script named 'bgapi.sh' add below code in the file 
+
+```#!/bin/bash
+while true
+do
+youtubedlapi-server-infusiblecoder -p 9191 --host 0.0.0.0 --number-processes 1
+sleep 2500
+done
+```
+save it then run this command to run it in the BG
+
+``nohup ./bgapi.sh &``
