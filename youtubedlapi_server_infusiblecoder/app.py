@@ -5,19 +5,17 @@ import sys
 
 from flask import Flask, Blueprint, current_app, jsonify, request, redirect, abort
 import yt_dlp
+from yt_dlp.version import __version__ as yt_dlp_version
 
-from yt_dlp import YoutubeDL
 from .version import __version__
-import subprocess
-import os
-import json
+
 
 if not hasattr(sys.stderr, 'isatty'):
     # In GAE it's not defined and we must monkeypatch
     sys.stderr.isatty = lambda: False
 
 
-class SimpleYDL(YoutubeDL):
+class SimpleYDL(yt_dlp.YoutubeDL):
     def __init__(self, *args, **kargs):
         super(SimpleYDL, self).__init__(*args, **kargs)
         self.add_default_info_extractors()
@@ -30,7 +28,7 @@ def get_videos(url, extra_params):
     ydl_params = {
         'format': 'best',
         'cachedir': False,
-        'logger': current_app.logger.getChild('yt-dlp'),
+        'logger': current_app.logger.getChild('youtube-dl'),
     }
     ydl_params.update(extra_params)
     ydl = SimpleYDL(ydl_params)
@@ -71,7 +69,7 @@ def set_access_control(f):
 
 @api.errorhandler(yt_dlp.utils.DownloadError)
 @api.errorhandler(yt_dlp.utils.ExtractorError)
-def handle_youtube_dl_error(error):
+def handle_yt_dlp_error(error):
     logging.error(traceback.format_exc())
     result = jsonify({'error': str(error)})
     result.status_code = 500
@@ -135,9 +133,9 @@ def get_result():
         if k in ALLOWED_EXTRA_PARAMS:
             convertf = ALLOWED_EXTRA_PARAMS[k]
             if convertf == bool:
-                convertf = lambda x: query_bool(x, k)
+                def convertf(x): return query_bool(x, k)
             elif convertf == list:
-                convertf = lambda x: x.split(',')
+                def convertf(x): return x.split(',')
             extra_params[k] = convertf(v)
     return get_videos(url, extra_params)
 
@@ -146,22 +144,9 @@ def get_result():
 @set_access_control
 def info():
     url = request.args['url']
-    # if 'instagram.com' in url or 'fb.watch' in url or 'facebook.com' in url:
-    #     result = subprocess.run(["yt-dlp", "--dump-json", "--no-cache-dir", str(url)], stdout=subprocess.PIPE, shell=True, encoding='utf-8')
-    #     result = json.loads(result.stdout)
-    #     key = 'info'
-    #     if query_bool(request.args.get('flatten'), 'flatten', False):
-    #         result = flatten_result(result)
-    #         key = 'videos'
-    #     result = {
-    #         'url': url,
-    #         key: result,
-    #     }
-    #     return jsonify(result)
-    # else:  
     result = get_result()
     key = 'info'
-    if query_bool(request.args.get('flatten'), 'flatten', False):
+    if query_bool(request.args.get('flatten'), 'flatten', True):
         result = flatten_result(result)
         key = 'videos'
     result = {
@@ -169,26 +154,12 @@ def info():
         key: result,
     }
     return jsonify(result)
- 
+
 
 @route_api('play')
 def play():
     result = flatten_result(get_result())
     return redirect(result[0]['url'])
-
-
-# def getInsta(url):
-#     result = subprocess.run(["yt-dlp", "--dump-json", "--no-cache-dir", str(url)], stdout=subprocess.PIPE, shell=True, encoding='utf-8')
-#     result = json.loads(result.stdout)
-#     key = 'info'
-#     if query_bool(request.args.get('flatten'), 'flatten', False):
-#         result = flatten_result(result)
-#         key = 'videos'
-#     result = {
-#         'url': url,
-#         key: result,
-#     }
-#     return jsonify(result)
 
 
 @route_api('extractors')
@@ -205,10 +176,11 @@ def list_extractors():
 @set_access_control
 def version():
     result = {
-        'yt-dlp': str(yt_dlp.version.__version__),
-        'youtube-dl-api-server': __version__,
+        'yt-dlp': yt_dlp_version,
+        'youtubedlapi-server-infusiblecoder': __version__,
     }
     return jsonify(result)
+
 
 app = Flask(__name__)
 app.register_blueprint(api)
