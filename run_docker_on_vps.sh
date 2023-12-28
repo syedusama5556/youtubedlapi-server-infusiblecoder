@@ -24,10 +24,10 @@ sudo systemctl enable docker
 sudo systemctl start docker
 
 # Pull Docker container
-sudo docker pull syedusama5556/youtubedlapi_server_infusiblecoder
+sudo docker pull syedusama5556/youtubedlapi_server_infusiblecoder:v2
 
 # Run Docker container, expose port 9191, and map it to the host machine
-sudo docker run -d -p 9191:9191 --name youtubedlapi_container syedusama5556/youtubedlapi_server_infusiblecoder
+sudo docker run -d -p 9191:9191 --name youtubedlapi_container syedusama5556/youtubedlapi_server_infusiblecoder:v2
 
 # Allow incoming traffic on port 9191
 sudo ufw allow 9191
