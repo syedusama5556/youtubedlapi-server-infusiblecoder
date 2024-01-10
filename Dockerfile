@@ -2,6 +2,8 @@ FROM python:3-alpine
 
 RUN pip3 install Flask gunicorn yt-dlp
 
+RUN pip3 install --upgrade pip
+
 COPY ./ /app
 
 WORKDIR /app
