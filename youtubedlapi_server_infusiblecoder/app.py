@@ -67,11 +67,19 @@ def set_access_control(f):
     return wrapper
 
 
+
+@api.errorhandler(Exception)
+def handle_internal_server_error(error):
+    logging.error(traceback.format_exc())
+    result = jsonify({'error': 'Internal server error. Please try again later.'})
+    result.status_code = 500
+    return result
+
 @api.errorhandler(yt_dlp.utils.DownloadError)
 @api.errorhandler(yt_dlp.utils.ExtractorError)
 def handle_yt_dlp_error(error):
     logging.error(traceback.format_exc())
-    result = jsonify({'error': str(error)})
+    result = jsonify({'error': 'Failed to download content. Please check the provided URL and try again.'})
     result.status_code = 500
     return result
 
