@@ -3,7 +3,7 @@ import logging
 import traceback
 import sys
 
-from flask import Flask, Blueprint, current_app, jsonify, request, redirect, abort
+from flask import Flask, Blueprint, current_app, jsonify, request, redirect, abort, make_response
 import yt_dlp
 from yt_dlp.version import __version__ as yt_dlp_version
 
@@ -20,7 +20,6 @@ class SimpleYDL(yt_dlp.YoutubeDL):
         super(SimpleYDL, self).__init__(*args, **kargs)
         self.add_default_info_extractors()
 
-
 def get_videos(url, extra_params):
     '''
     Get a list with a dict for every video founded
@@ -31,24 +30,40 @@ def get_videos(url, extra_params):
         'logger': current_app.logger.getChild('youtube-dl'),
     }
     ydl_params.update(extra_params)
-    ydl = SimpleYDL(ydl_params)
-    res = ydl.extract_info(url, download=False)
-    return res
+
+    try:
+        current_app.logger.info(f"Extracting video info from URL: {url} with params: {extra_params}")
+        with SimpleYDL(ydl_params) as ydl:
+            res = ydl.extract_info(url, download=False)
+        current_app.logger.info("Video extraction successful.")
+        return res
+    except Exception as e:
+        current_app.logger.error(f"Error during video extraction: {e}")
+        raise 
 
 
 def flatten_result(result):
-    r_type = result.get('_type', 'video')
-    if r_type == 'video':
-        videos = [result]
-    elif r_type == 'playlist':
-        videos = []
-        for entry in result['entries']:
-            videos.extend(flatten_result(entry))
-    elif r_type == 'compat_list':
-        videos = []
-        for r in result['entries']:
-            videos.extend(flatten_result(r))
-    return videos
+    if result is None:
+        # Handle the case where result is None
+        # You can log this and return an empty list, or handle it differently as needed
+        print("Received None result in flatten_result")  # Replace with logging if available
+        return []
+
+    try:
+        r_type = result.get('_type', 'video')
+
+        if r_type == 'video':
+            return [result]
+        elif r_type in ['playlist', 'compat_list']:
+            videos = []
+            for entry in result.get('entries', []):
+                videos.extend(flatten_result(entry))
+            return videos
+        else:
+            raise ValueError(f"Unsupported type in result: {r_type}")
+    except Exception as e:
+        print(f"Error in flatten_result: {e}")  # Replace with logging if available
+        raise
 
 
 api = Blueprint('api', __name__)
@@ -61,11 +76,18 @@ def route_api(subpath, *args, **kargs):
 def set_access_control(f):
     @functools.wraps(f)
     def wrapper(*args, **kargs):
-        response = f(*args, **kargs)
+        result = f(*args, **kargs)
+
+        # Check if the result is a tuple (body, status_code)
+        if isinstance(result, tuple):
+            # Create a response object from the tuple
+            response = make_response(result[0], result[1])
+        else:
+            response = make_response(result)
+
         response.headers['Access-Control-Allow-Origin'] = '*'
         return response
     return wrapper
-
 
 
 @api.errorhandler(Exception)
@@ -145,14 +167,22 @@ def get_result():
             elif convertf == list:
                 def convertf(x): return x.split(',')
             extra_params[k] = convertf(v)
-    return get_videos(url, extra_params)
-
+    result = get_videos(url, extra_params)
+    if result is None:
+        # Handle the case where result is None
+        # You can log this error or handle it as per your application's needs
+        print(f"No result returned from get_videos for URL: {url}")  # Replace with logging
+        return None  # Or handle it differently as needed
+    return result
 
 @route_api('info')
 @set_access_control
 def info():
     url = request.args['url']
     result = get_result()
+    if result is None:
+        return jsonify({'error': 'No data found for the provided URL'}), 404
+
     key = 'info'
     if query_bool(request.args.get('flatten'), 'flatten', True):
         result = flatten_result(result)
@@ -167,6 +197,9 @@ def info():
 @route_api('play')
 def play():
     result = flatten_result(get_result())
+    if result is None or not result:
+        return jsonify({'error': 'No playable content found for the provided URL'}), 404
+
     return redirect(result[0]['url'])
 
 

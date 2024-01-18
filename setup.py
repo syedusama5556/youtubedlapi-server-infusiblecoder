@@ -9,7 +9,7 @@ long_description_txt = (this_directory / "README.md").read_text()
 
 setup(
     name='youtubedlapi_server_infusiblecoder',
-    version='3.7',
+    version='3.7.3',
     description='An API server based on yt-dlp',
     long_description=long_description_txt,
     long_description_content_type='text/markdown',
