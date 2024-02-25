@@ -157,42 +157,47 @@ ALLOWED_EXTRA_PARAMS = {
 
 
 def get_result():
-    url = request.args['url']
-    extra_params = {}
-    for k, v in request.args.items():
-        if k in ALLOWED_EXTRA_PARAMS:
-            convertf = ALLOWED_EXTRA_PARAMS[k]
-            if convertf == bool:
-                def convertf(x): return query_bool(x, k)
-            elif convertf == list:
-                def convertf(x): return x.split(',')
-            extra_params[k] = convertf(v)
-    result = get_videos(url, extra_params)
-    if result is None:
-        # Handle the case where result is None
-        # You can log this error or handle it as per your application's needs
-        print(f"No result returned from get_videos for URL: {url}")  # Replace with logging
-        return None  # Or handle it differently as needed
-    return result
-
+    try:
+        url = request.args['url']
+        extra_params = {}
+        for k, v in request.args.items():
+            if k in ALLOWED_EXTRA_PARAMS:
+                convertf = ALLOWED_EXTRA_PARAMS[k]
+                if convertf == bool:
+                    def convertf(x): return query_bool(x, k)
+                elif convertf == list:
+                    def convertf(x): return x.split(',')
+                extra_params[k] = convertf(v)
+        result = get_videos(url, extra_params)
+        if result is None:
+            # Handle the case where result is None
+            # You can log this error or handle it as per your application's needs
+            print(f"No result returned from get_videos for URL: {url}")  # Replace with logging
+            return None  # Or handle it differently as needed
+        return result
+    except:
+        return None
+        
 @route_api('info')
 @set_access_control
 def info():
-    url = request.args['url']
-    result = get_result()
-    if result is None:
-        return jsonify({'error': 'No data found for the provided URL'}), 404
+    try:
+        url = request.args['url']
+        result = get_result()
+        if result is None:
+            return jsonify({'error': 'No data found for the provided URL'}), 404
 
-    key = 'info'
-    if query_bool(request.args.get('flatten'), 'flatten', True):
-        result = flatten_result(result)
-        key = 'videos'
-    result = {
-        'url': url,
-        key: result,
-    }
-    return jsonify(result)
-
+        key = 'info'
+        if query_bool(request.args.get('flatten'), 'flatten', True):
+            result = flatten_result(result)
+            key = 'videos'
+        result = {
+            'url': url,
+            key: result,
+        }
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': f'Error  {e}'}), 500
 
 @route_api('play')
 def play():
