@@ -3,5 +3,6 @@ flask
 gunicorn
 pathlib
 Flask-Caching
+flask_caching
 gevent
 
