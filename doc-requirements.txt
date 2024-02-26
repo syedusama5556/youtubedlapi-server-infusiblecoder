@@ -1,2 +1,2 @@
-sphinxcontrib-httpdomain >= 1.4.0
+sphinxcontrib-httpdomain >= 1.8.1
 -r requirements.txt

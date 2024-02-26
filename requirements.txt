@@ -1,4 +1,7 @@
-yt-dlp >= 2023.12.30
+git+https://github.com/yt-dlp/yt-dlp.git
 flask
 gunicorn
 pathlib
+Flask-Caching
+gevent
+

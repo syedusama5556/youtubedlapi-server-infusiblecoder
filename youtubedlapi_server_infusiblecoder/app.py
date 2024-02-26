@@ -9,6 +9,16 @@ from yt_dlp.version import __version__ as yt_dlp_version
 
 from .version import __version__
 
+from flask_caching import Cache
+cache = Cache()
+
+# Configure Flask-Caching
+cache_config = {
+    "DEBUG": True,          # some Flask specific configs
+    "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
+    "CACHE_DEFAULT_TIMEOUT": 300
+}
+
 
 if not hasattr(sys.stderr, 'isatty'):
     # In GAE it's not defined and we must monkeypatch
@@ -19,6 +29,7 @@ class SimpleYDL(yt_dlp.YoutubeDL):
     def __init__(self, *args, **kargs):
         super(SimpleYDL, self).__init__(*args, **kargs)
         self.add_default_info_extractors()
+
 
 def get_videos(url, extra_params):
     '''
@@ -183,6 +194,7 @@ def get_result():
 def info():
     try:
         url = request.args['url']
+        print( url)
         result = get_result()
         if result is None:
             return jsonify({'error': 'No data found for the provided URL'}), 404
@@ -228,6 +240,11 @@ def version():
     return jsonify(result)
 
 
+
+
 app = Flask(__name__)
 app.register_blueprint(api)
 app.config.from_pyfile('../application.cfg', silent=True)
+app.config.from_mapping(cache_config)
+cache = Cache(app)
+
