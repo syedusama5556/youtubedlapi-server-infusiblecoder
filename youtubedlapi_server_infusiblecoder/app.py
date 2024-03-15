@@ -1,7 +1,15 @@
 import functools
+import json
 import logging
+import re
 import traceback
 import sys
+
+import asyncio
+from httpx import AsyncClient
+from bilix.sites.bilibili import api as bilibili_api
+
+
 
 from flask import Flask, Blueprint, current_app, jsonify, request, redirect, abort, make_response
 import yt_dlp
@@ -239,12 +247,37 @@ def version():
     }
     return jsonify(result)
 
+@route_api('bili')
+@set_access_control
+def get_bilibili_info():
+    """
+    Synchronous endpoint to get video information from a Bilibili video URL.
+    """
+    try:
+        url = request.args.get('url')
+        if not url:
+            return jsonify({'error': 'URL parameter is required'})
+        
+        if not re.match(r"https?://(?:www\.)?bilibili\.com/video/[a-zA-Z0-9]+", url):
+            return jsonify({'error': 'Only Bilibili video URLs are supported.'})
 
+        async def fetch_info():
+            async with AsyncClient(**bilibili_api.dft_client_settings) as client:
+                return await bilibili_api.get_video_info(client, url)
 
+        video_info = asyncio.run(fetch_info())
+        response_data = json.loads(video_info.model_dump_json())
+        return jsonify(response_data) 
+    except Exception as err:
+        return jsonify({'error': 'Failed to fetch video information.', 'details': str(err)})
+
+from asgiref.wsgi import WsgiToAsgi
 
 app = Flask(__name__)
 app.register_blueprint(api)
 app.config.from_pyfile('../application.cfg', silent=True)
 app.config.from_mapping(cache_config)
 cache = Cache(app)
+app_asgi = WsgiToAsgi(app)
+
 

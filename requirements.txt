@@ -1,8 +1,10 @@
 git+https://github.com/yt-dlp/yt-dlp.git
-flask
+Flask>=3.0.2
 gunicorn
 pathlib
 Flask-Caching
 flask_caching
 gevent
-
+bilix
+uvicorn
+asgiref

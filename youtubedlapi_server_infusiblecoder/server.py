@@ -1,12 +1,10 @@
 import argparse
-
-from .app import app
+import uvicorn
 from .version import __version__
 
 """
     A server for providing the app anywhere, no need for GAE
 """
-
 
 def main():
     desc = """
@@ -30,11 +28,10 @@ def main():
     )
 
     parser.add_argument(
-        '--number-processes',
-        default=5,
-        type=int,
-        help=('The number of processes the server will use. The default is: '
-              '%(default)s'),
+        '--log-level',
+        default='info',
+        choices=['debug', 'info', 'warning', 'error', 'critical'],
+        help='Log level for the server. The default is: %(default)s',
     )
 
     parser.add_argument('--version', action='store_true',
@@ -45,4 +42,8 @@ def main():
         print(__version__)
         exit(0)
 
-    app.run(args.host, args.port, processes=args.number_processes)
+    # Ensure the Flask application is imported here
+    from .app import app
+
+    # Convert Flask app to ASGI
+    uvicorn.run(app, host=args.host, port=args.port, log_level=args.log_level)

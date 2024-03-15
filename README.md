@@ -18,7 +18,37 @@ About
 ``youtubedlapi-server-infusiblecoder`` is released to the public domain, read the [License](https://raw.githubusercontent.com/syedusama5556/youtubedlapi-server-infusiblecoder/master/LICENSE.md) for more info.
 
 
-Example
+NEW Example Usage
+-----
+``uvicorn youtubedlapi_server_infusiblecoder.app:app_asgi --host 127.0.0.1 --port 9191 --workers 1 --log-level info``
+
+or
+
+``uvicorn youtubedlapi_server_infusiblecoder.app:app_asgi --host 0.0.0.0 --port 9191 --workers 1 --log-level info``
+
+or for running in bacground 
+
+``nohup uvicorn youtubedlapi_server_infusiblecoder.app:app_asgi --host 0.0.0.0 --port 9191 --workers 1 --log-level info &``
+
+Run in BG with A Repeted Job To Restart Server When Its Down
+------------------------------------------------------------
+
+create a script named 'bgapi.sh' add below code in the file 
+
+```#!/bin/bash
+while true
+do
+uvicorn youtubedlapi_server_infusiblecoder.app:app_asgi --host 0.0.0.0 --port 9191 --workers 1 --log-level info
+sleep 2500
+done
+```
+save it then run this command to run it in the BG
+
+``nohup ./bgapi.sh &``
+
+
+
+Old Example Usage
 -----
 
 ``youtubedlapi-server-infusiblecoder -p 8000 --host 127.0.0.1 --number-processes 1``

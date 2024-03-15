@@ -10,7 +10,7 @@ long_description_txt = (this_directory / "README.md").read_text()
 
 setup(
     name="youtubedlapi_server_infusiblecoder",
-    version="3.7.6",
+    version="3.7.7",
     description="An API server based on yt-dlp",
     long_description=long_description_txt,
     long_description_content_type="text/markdown",
@@ -23,12 +23,18 @@ setup(
             "youtubedlapi-server-infusiblecoder = youtubedlapi_server_infusiblecoder.server:main",
         ],
     },
+
+
     install_requires=[
-        "Flask",
+        "Flask>=3.0.2",
         "yt_dlp >= 2023.12.30",
         "Flask-Caching",
         "flask_caching",
         "gevent",
+        "uvicorn",
+        "bilix", 
+        "httpx",
+        "asgiref",
         "gunicorn",
     ],
     classifiers=[
