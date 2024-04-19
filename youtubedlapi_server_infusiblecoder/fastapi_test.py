@@ -11,7 +11,7 @@ from yt_dlp.version import __version__ as yt_dlp_version
 from httpx import AsyncClient
 from bilix.sites.bilibili import api as bilibili_api
 
-from .version import __version__
+from version import __version__
 
 app = FastAPI()
 

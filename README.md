@@ -20,15 +20,15 @@ About
 
 NEW Example Usage
 -----
-``uvicorn youtubedlapi_server_infusiblecoder.app:app_asgi --host 127.0.0.1 --port 9191 --workers 1 --log-level info``
+``uvicorn youtubedlapi_server_infusiblecoder.app:app --host 127.0.0.1 --port 9191 --workers 1 --log-level info``
 
 or
 
-``uvicorn youtubedlapi_server_infusiblecoder.app:app_asgi --host 0.0.0.0 --port 9191 --workers 1 --log-level info``
+``uvicorn youtubedlapi_server_infusiblecoder.app:app --host 0.0.0.0 --port 9191 --workers 1 --log-level info``
 
 or for running in bacground 
 
-``nohup uvicorn youtubedlapi_server_infusiblecoder.app:app_asgi --host 0.0.0.0 --port 9191 --workers 1 --log-level info &``
+``nohup uvicorn youtubedlapi_server_infusiblecoder.app:app --host 0.0.0.0 --port 9191 --workers 1 --log-level info &``
 
 Run in BG with A Repeted Job To Restart Server When Its Down
 ------------------------------------------------------------
@@ -38,7 +38,7 @@ create a script named 'bgapi.sh' add below code in the file
 ```#!/bin/bash
 while true
 do
-uvicorn youtubedlapi_server_infusiblecoder.app:app_asgi --host 0.0.0.0 --port 9191 --workers 1 --log-level info
+uvicorn youtubedlapi_server_infusiblecoder.app:app --host 0.0.0.0 --port 9191 --workers 1 --log-level info
 sleep 2500
 done
 ```
