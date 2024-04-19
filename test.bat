@@ -8,7 +8,7 @@ for %%f in (youtubedlapi_server_infusiblecoder-*.whl) do (
 )
 
 REM Start Uvicorn server
-start "Uvicorn Server" cmd /k uvicorn youtubedlapi_server_infusiblecoder.app:app --host 0.0.0.0 --port 9191 --workers 1 --log-level info
+start "Uvicorn Server" cmd /k uvicorn youtubedlapi_server_infusiblecoder.app:app --host 0.0.0.0 --port 9191 --workers 3 --log-level info
 
 @REM REM Start Celery worker
 @REM start "Celery Worker" cmd /k celery -A youtubedlapi_server_infusiblecoder.app.mycele worker --loglevel=info
