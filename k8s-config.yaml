@@ -1,0 +1,59 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ytdlp-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ytdlp-server
+  template:
+    metadata:
+      labels:
+        app: ytdlp-server
+    spec:
+      containers:
+      - name: ytdlp-server
+        image: syedusama5556/youtubedlapi_server_infusiblecoder:latest
+        ports:
+        - containerPort: 9191
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ytdlp-server
+spec:
+  selector:
+    app: ytdlp-server
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9191
+  type: LoadBalancer
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ytdlp-server-autoscaler
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ytdlp-server
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50

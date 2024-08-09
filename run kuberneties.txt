@@ -1,0 +1,3 @@
+kubectl apply -f k8s-config.yaml
+
+kubectl get deployment metrics-server -n kube-system

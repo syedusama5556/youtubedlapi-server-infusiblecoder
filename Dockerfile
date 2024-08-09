@@ -64,6 +64,7 @@ RUN dnf update -y && \
     dnf install -y git gcc python3 python3-devel redis && \
     # Install pip and supervisord
     pip3 install --upgrade pip && \
+    pip3 install --upgrade yt-dlp && \
     pip3 install supervisor
 
 # Install application dependencies
