@@ -1,14 +1,10 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import datetime
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath('.')))
 import youtubedlapi_server_infusiblecoder
-import youtubedlapi_server_infusiblecoder.app
 
 # -- General configuration -----------------------------------------------------
 
@@ -38,8 +34,8 @@ version = '.'.join(release.split('.')[:2])
 # directories to ignore when looking for source files.
 exclude_patterns = ['_build']
 
-ALLOWED_EXTRA_PARAMS = youtubedlapi_server_infusiblecoder.app.ALLOWED_EXTRA_PARAMS
-extra_params = ', '.join('``{}``'.format(param) for param in ALLOWED_EXTRA_PARAMS.keys())
+ALLOWED_EXTRA_PARAMS = ['format', 'playliststart', 'playlistend', 'playlist_items', 'playlistreverse', 'matchtitle', 'rejecttitle', 'writesubtitles', 'writeautomaticsub', 'allsubtitles', 'subtitlesformat', 'subtitleslangs']
+extra_params = ', '.join('``{}``'.format(param) for param in ALLOWED_EXTRA_PARAMS)
 # the string will be included at the end of every source file that is read
 rst_epilog = """
 .. |info-extra-params| replace:: {extra_params}

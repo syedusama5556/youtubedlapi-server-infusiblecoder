@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "youtubedlapi-server-infusiblecoder"
+version = "3.8.0"
+description = "An API server based on yt-dlp"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "Public Domain"}
+authors = [
+    {name = "Syed Usama Ahmad", email = "syedusama5556@gmail.com"}
+]
+classifiers = [
+    "Topic :: Multimedia :: Video",
+    "Topic :: Internet :: WWW/HTTP :: WSGI",
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "License :: Public Domain",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "yt-dlp",
+    "httpx",
+    "bilix",
+]
+
+[project.optional-dependencies]
+celery = [
+    "celery",
+    "redis",
+]
+dev = [
+    "pytest",
+    "httpx",
+]
+
+[project.urls]
+Homepage = "https://github.com/syedusama5556/youtubedlapi-server-infusiblecoder"
+
+[project.scripts]
+youtubedlapi-server-infusiblecoder = "youtubedlapi_server_infusiblecoder.server:main"
+
+[tool.setuptools.packages.find]
+include = ["youtubedlapi_server_infusiblecoder*"]
+
+[tool.flake8]
+exclude = ["gae", "docs", ".git", "__pycache__", "VENV"]
+ignore = ["E501"]

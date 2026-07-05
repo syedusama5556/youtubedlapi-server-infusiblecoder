@@ -13,10 +13,6 @@ Run the API server
 
     The host the server will use. The default host is localhost
 
-.. option:: --number-processes NUMBER_PROCESSES
-
-    The number of processes the server will use. The default is: 5
-
 .. option:: -h , --help
 
     Display the help text
@@ -24,8 +20,20 @@ Run the API server
 .. option:: --version
 
     Print the version of the server
-    
-.. option:: final example
 
-    youtubedlapi-server-infusiblecoder -p 8000 --host 127.0.0.1 --number-processes 1
+.. option:: --log-level {debug,info,warning,error,critical}
 
+    Log level for the server. The default is: info
+
+Examples
+********
+
+.. code:: bash
+
+    youtubedlapi-server-infusiblecoder -p 8000 --host 127.0.0.1
+
+Or directly with uvicorn:
+
+.. code:: bash
+
+    uvicorn youtubedlapi_server_infusiblecoder.app:app --host 0.0.0.0 --port 9191 --workers 1

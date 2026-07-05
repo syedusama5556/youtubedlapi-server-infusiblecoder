@@ -22,7 +22,7 @@ API methods
 
     :query \*: A whitelist of extra parameters are passed directly to the ``YoutubeDL`` object.
         Currently it supports: |info-extra-params|.
-        See the `youtube-dl documentation <https://github.com/rg3/youtube-dl/blob/master/youtube_dl/YoutubeDL.py#L92>`_ for more info
+        See the `yt-dlp documentation <https://github.com/yt-dlp/yt-dlp/blob/master/yt_dlp/YoutubeDL.py#L92>`_ for more info
 
 
     :resheader Content-Type: ``application/json``
@@ -136,7 +136,7 @@ API methods
 
 .. http:get:: /api/version
 
-    Get the youtube-dl and youtubedlapi-server-infusiblecoder version
+    Get the yt-dlp and youtubedlapi-server-infusiblecoder version
 
     :resheader Content-Type: ``application/json``
     :resheader Access-Control-Allow-Origin: ``*``
@@ -162,8 +162,8 @@ API methods
         Content-Type: application/json
 
         {
-            "youtube-dl": "2016.04.19",
-            "youtubedlapi-server-infusiblecoder": "0.2"
+            "yt-dlp": "2026.07.04",
+            "youtubedlapi-server-infusiblecoder": "3.8.0"
         }
 
 Test server

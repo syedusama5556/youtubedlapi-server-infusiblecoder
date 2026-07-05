@@ -1,78 +1,62 @@
 [![PyPI](https://img.shields.io/pypi/v/youtubedlapi-server-infusiblecoder)](https://pypi.org/project/youtubedlapi-server-infusiblecoder/)
 [![Downloads](https://static.pepy.tech/badge/youtubedlapi-server-infusiblecoder)](https://pepy.tech/project/youtubedlapi-server-infusiblecoder)
-[![Downloads](https://static.pepy.tech/badge/youtubedlapi-server-infusiblecoder/month)](https://pepy.tech/project/youtubedlapi-server-infusiblecoder)
-[![Downloads](https://static.pepy.tech/badge/youtubedlapi-server-infusiblecoder/week)](https://pepy.tech/project/youtubedlapi-server-infusiblecoder)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://img.shields.io/badge/License-MIT-blue.svg)
-
-
 
 youtubedlapi-server-infusiblecoder
 =====================
 
-A REST API server for getting the info for videos from different sites, powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp)_.
-The installation instructions and the documentation are available at [Read the Docs](https://youtubedlapi-server-infusiblecoder.readthedocs.io/)_.
+A REST API server for getting video info from different sites, powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp).
 
-About
------
+Requires Python >= 3.11. Uses [uv](https://docs.astral.sh/uv/) for package management.
 
-``youtubedlapi-server-infusiblecoder`` is released to the public domain, read the [License](https://raw.githubusercontent.com/syedusama5556/youtubedlapi-server-infusiblecoder/master/LICENSE.md) for more info.
+Installation
+------------
 
+```bash
+# Install uv (if not installed)
+pip install uv
 
-NEW Example Usage
------
-``uvicorn youtubedlapi_server_infusiblecoder.app:app --host 127.0.0.1 --port 9191 --workers 1 --log-level info``
-
-or
-
-``uvicorn youtubedlapi_server_infusiblecoder.app:app --host 0.0.0.0 --port 9191 --workers 1 --log-level info``
-
-or for running in bacground 
-
-``nohup uvicorn youtubedlapi_server_infusiblecoder.app:app --host 0.0.0.0 --port 9191 --workers 1 --log-level info &``
-
-Run in BG with A Repeted Job To Restart Server When Its Down
-------------------------------------------------------------
-
-create a script named 'bgapi.sh' add below code in the file 
-
-```#!/bin/bash
-while true
-do
-uvicorn youtubedlapi_server_infusiblecoder.app:app --host 0.0.0.0 --port 9191 --workers 1 --log-level info
-sleep 2500
-done
+# Clone and install
+git clone https://github.com/syedusama5556/youtubedlapi-server-infusiblecoder
+cd youtubedlapi-server-infusiblecoder
+uv sync
 ```
-save it then run this command to run it in the BG
 
-``nohup ./bgapi.sh &``
+Or via pip:
 
+```bash
+pip install youtubedlapi-server-infusiblecoder
+```
 
-
-Old Example Usage
+Usage
 -----
 
-``youtubedlapi-server-infusiblecoder -p 8000 --host 127.0.0.1 --number-processes 1``
-
-or
-
-``youtubedlapi-server-infusiblecoder -p 9191 --host 0.0.0.0 --number-processes 1``
-
-or for running in bacground 
-
-``nohup youtubedlapi-server-infusiblecoder -p 9191 --host 0.0.0.0 --number-processes 1 &``
-
-Run in BG with A Repeted Job To Restart Server When Its Down
-------------------------------------------------------------
-
-create a script named 'bgapi.sh' add below code in the file 
-
-```#!/bin/bash
-while true
-do
-youtubedlapi-server-infusiblecoder -p 9191 --host 0.0.0.0 --number-processes 1
-sleep 2500
-done
+```bash
+uv run uvicorn youtubedlapi_server_infusiblecoder.app:app --host 0.0.0.0 --port 9191 --workers 1 --log-level info
 ```
-save it then run this command to run it in the BG
 
-``nohup ./bgapi.sh &``
+Or using the CLI:
+
+```bash
+uv run youtubedlapi-server-infusiblecoder --host 0.0.0.0 --port 9191
+```
+
+Run in background:
+
+```bash
+nohup uvicorn youtubedlapi_server_infusiblecoder.app:app --host 0.0.0.0 --port 9191 --workers 1 --log-level info &
+```
+
+API Endpoints
+-------------
+
+- `GET /api/info?url=<video-url>` — Get video information
+- `GET /api/play?url=<video-url>` — Redirect to video URL
+- `GET /api/extractors` — List available extractors
+- `GET /api/version` — Get version info
+- `GET /api/bili?url=<bilibili-url>` — Get Bilibili video info
+
+License
+-------
+
+Released to the public domain.
