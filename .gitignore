@@ -14,3 +14,15 @@ docs/_build
 
 # configuration file for the app
 application.cfg
+
+# Virtual environment
+.venv/
+
+# Temp downloads (runtime data)
+temp_downloads/
+
+# Pycache
+__pycache__
+
+# Personal notes
+notes/

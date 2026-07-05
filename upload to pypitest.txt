@@ -1,5 +1,0 @@
-python setup.py sdist bdist_wheel
-twine upload -r testpypi dist/*
-twine upload -r pypi dist/*
-
-

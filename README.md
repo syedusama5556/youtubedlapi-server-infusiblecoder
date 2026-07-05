@@ -8,6 +8,7 @@ youtubedlapi-server-infusiblecoder
 A REST API server for getting video info from different sites, powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp).
 
 Requires Python >= 3.11. Uses [uv](https://docs.astral.sh/uv/) for package management.
+Installs [Deno](https://deno.land) automatically in the Docker image (used by some yt-dlp extractors as a JavaScript runtime).
 
 Installation
 ------------
@@ -50,8 +51,20 @@ nohup uvicorn youtubedlapi_server_infusiblecoder.app:app --host 0.0.0.0 --port 9
 API Endpoints
 -------------
 
+### Info
 - `GET /api/info?url=<video-url>` — Get video information
+- `GET /api/formats?url=<video-url>` — List available formats/resolutions
+- `GET /api/subtitles?url=<video-url>` — List available subtitles
+- `GET /api/search?q=<query>&limit=10` — Search for videos on supported sites
+
+### Playback
 - `GET /api/play?url=<video-url>` — Redirect to video URL
+- `GET /api/audio?url=<video-url>` — Get best audio stream URL
+- `GET /api/download?url=<video-url>&format_id=best` — Download video, returns a temp streaming link
+- `GET /api/stream/<file_id>` — Stream a downloaded file (temp link, expires in 1h)
+- `GET /api/stream/<file_id>?download=1` — Force-download the temp file
+
+### Server
 - `GET /api/extractors` — List available extractors
 - `GET /api/version` — Get version info
 - `GET /api/bili?url=<bilibili-url>` — Get Bilibili video info
