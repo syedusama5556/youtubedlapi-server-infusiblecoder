@@ -1,0 +1,22 @@
+Tested URLs - yt-dlp API Server (v3.9.0)
+=========================================
+
+=== WORKING ===
+
+YouTube      - https://www.youtube.com/watch?v=dQw4w9WgXcQ
+               info, formats, subtitles, audio, search, download+stream all work
+
+Vimeo        - https://vimeo.com/76979871
+TED          - https://www.ted.com/talks/chloe_valdary_how_love_can_help_repair_social_inequality
+Instagram    - https://www.instagram.com/p/DZum0cIgpUN/ (video post works)
+TikTok       - https://www.tiktok.com/@natgeo/video/7657545298406935821
+Twitter/X    - https://x.com/WhiteHouse/status/2073120924753113295 (video tweets)
+Twitch       - https://www.twitch.tv/ninja/clip/ImpartialPiercingAirGuitarRlyTho-XAifq5WBLrORdP1G
+SoundCloud   - https://soundcloud.com/vanya-srivastava-369319403
+
+=== NOT WORKING ===
+
+Spotify      - DRM protected, not supported by yt-dlp
+Instagram    - https://www.instagram.com/p/DaYO4H-jI7b/ (image-only post, no video)
+Facebook     - API parse error, needs yt-dlp update
+Dailymotion  - https://www.dailymotion.com/video/xal2ebm (works with curl_cffi impersonation)

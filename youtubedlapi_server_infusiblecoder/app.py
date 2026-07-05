@@ -12,6 +12,7 @@ from fastapi.responses import JSONResponse, RedirectResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import yt_dlp
 from yt_dlp.version import __version__ as yt_dlp_version
+from yt_dlp.networking.impersonate import ImpersonateTarget
 from httpx import AsyncClient
 from bilix.sites.bilibili import api as bilibili_api
 
@@ -29,20 +30,51 @@ app.add_middleware(
 
 TEMP_DIR = Path("temp_downloads")
 TEMP_DIR.mkdir(exist_ok=True)
-# ponytail: simple dict store, swap to DB if multi-instance needed
 _downloads = {}
+
+# --- Runtime detection ---
+FFMPEG_PATH = shutil.which("ffmpeg")
+FFPROBE_PATH = shutil.which("ffprobe")
+DENO_PATH = shutil.which("deno")
+NODE_PATH = shutil.which("node")
+
+_js_runtimes = {}
+if DENO_PATH:
+    _js_runtimes["deno"] = {}
+if NODE_PATH:
+    _js_runtimes["node"] = {}
+
+_HAS_CURL_CFFI = False
+try:
+    import curl_cffi
+    _HAS_CURL_CFFI = True
+except ImportError:
+    pass
+
+logging.info(f"ffmpeg: {FFMPEG_PATH}, deno: {DENO_PATH}, node: {NODE_PATH}, curl_cffi: {_HAS_CURL_CFFI}")
 
 class SimpleYDL(yt_dlp.YoutubeDL):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.add_default_info_extractors()
 
-async def get_videos(url: str, extra_params: dict):
-    ydl_params = {
-        'format': 'best',
+_impersonate_ctx = ImpersonateTarget(client='chrome', os='windows', os_version='10') if _HAS_CURL_CFFI else None
+
+def _base_params():
+    p = {
         'cachedir': False,
         'logger': logging.getLogger('youtube-dl'),
+        'js_runtimes': _js_runtimes or {'deno': {}},
     }
+    if FFMPEG_PATH:
+        p['ffmpeg_location'] = FFMPEG_PATH
+    if _impersonate_ctx:
+        p['impersonate'] = _impersonate_ctx
+    return p
+
+async def get_videos(url: str, extra_params: dict):
+    ydl_params = _base_params()
+    ydl_params['format'] = 'best'
     ydl_params.update(extra_params)
 
     try:
@@ -139,7 +171,6 @@ async def list_formats(url: str):
     if not result:
         raise HTTPException(status_code=404, detail="No data found")
     formats = result.get('formats', [])
-    # Return minimal useful format info
     return {
         "url": url,
         "title": result.get('title'),
@@ -207,7 +238,8 @@ async def get_audio(url: str, format_id: Optional[str] = "bestaudio/best"):
 @app.get("/api/download")
 async def download_video(
     url: str,
-    format_id: Optional[str] = Query("best", description="Format ID to download"),
+    format_id: Optional[str] = Query("bestvideo+bestaudio/best", description="Format ID to download"),
+    merge: Optional[bool] = Query(True, description="Merge video+audio with ffmpeg"),
     background_tasks: BackgroundTasks = None,
 ):
     """Download a video to the server and return a temp streaming link."""
@@ -216,20 +248,38 @@ async def download_video(
     out_dir.mkdir(parents=True, exist_ok=True)
     out_tmpl = str(out_dir / "%(title)s.%(ext)s")
 
-    ydl_params = {
+    ydl_params = _base_params()
+    ydl_params.update({
         'format': format_id,
         'outtmpl': out_tmpl,
-        'cachedir': False,
-        'logger': logging.getLogger('youtube-dl'),
-        'max_filesize': 500_000_000,  # ponytail: 500MB cap, remove if self-hosting big files
-    }
+        'max_filesize': 500_000_000,
+    })
+
+    if merge and FFMPEG_PATH:
+        ydl_params['merge_output_format'] = 'mp4'
+        ydl_params['postprocessor_args'] = {
+            'ffmpeg': ['-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-strict', '-2'],
+        }
 
     loop = asyncio.get_event_loop()
     try:
         info = await loop.run_in_executor(None, lambda: download_sync(ydl_params, url))
     except Exception as e:
         shutil.rmtree(out_dir, ignore_errors=True)
-        raise HTTPException(status_code=500, detail=f"Download failed: {str(e)}")
+        err_str = str(e)
+        # Fallback: retry without merge if merge-related error
+        if merge and FFMPEG_PATH and ('merge' in err_str.lower() or 'postprocessing' in err_str.lower() or 'ffmpeg' in err_str.lower()):
+            logging.info(f"Merge failed, retrying without ffmpeg merge: {err_str}")
+            ydl_params.pop('merge_output_format', None)
+            ydl_params.pop('postprocessor_args', None)
+            ydl_params['format'] = 'best'
+            try:
+                info = await loop.run_in_executor(None, lambda: download_sync(ydl_params, url))
+            except Exception as e2:
+                shutil.rmtree(out_dir, ignore_errors=True)
+                raise HTTPException(status_code=500, detail=f"Download failed: {str(e2)}")
+        else:
+            raise HTTPException(status_code=500, detail=f"Download failed: {err_str}")
 
     if not info:
         shutil.rmtree(out_dir, ignore_errors=True)
@@ -238,7 +288,6 @@ async def download_video(
     file_path = info['filepath']
     file_id = uuid.uuid4().hex
     ext = Path(file_path).suffix.lower()
-    # ponytail: naive content-type mapping
     mime_map = {
         '.mp4': 'video/mp4', '.webm': 'video/webm', '.mkv': 'video/x-matroska',
         '.avi': 'video/x-msvideo', '.mov': 'video/quicktime',
@@ -261,6 +310,7 @@ async def download_video(
         "download_url": f"/api/stream/{file_id}?download=1",
         "expires_in": "1 hour",
         "filesize": info.get('filesize', Path(file_path).stat().st_size),
+        "ffmpeg_merged": merge and FFMPEG_PATH,
     }
 
 def download_sync(params, url):
@@ -291,11 +341,21 @@ async def stream_file(file_id: str, download: Optional[bool] = False):
         "Accept-Ranges": "bytes",
     })
 
+@app.get("/api/status")
+async def server_status():
+    """Check installed dependencies."""
+    return {
+        "yt_dlp": yt_dlp_version,
+        "ffmpeg": bool(FFMPEG_PATH),
+        "ffprobe": bool(FFPROBE_PATH),
+        "deno": bool(DENO_PATH),
+        "node": bool(NODE_PATH),
+        "js_runtimes": _js_runtimes,
+    }
+
 @app.exception_handler(Exception)
 async def exception_handler(request: Request, exc: Exception):
     return JSONResponse(
         status_code=500,
         content={"message": "An internal server error occurred", "detail": str(exc)}
     )
-
-# ponytail: skip background cleanup worker; downloads expire naturally via clean_old_downloads called per download

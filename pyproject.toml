@@ -27,6 +27,11 @@ dependencies = [
     "yt-dlp",
     "httpx",
     "bilix",
+    "curl-cffi",
+    "yt-dlp-ejs",
+    "brotli",
+    "websockets",
+    "pycryptodomex",
 ]
 
 [project.optional-dependencies]
