@@ -6,20 +6,21 @@ if ! command -v python3 &> /dev/null; then
     sudo apt update
     sudo apt install -y software-properties-common
     sudo add-apt-repository -y ppa:deadsnakes/ppa
-    sudo apt install -y python3.9
+    sudo apt install -y python3.11
     sudo apt install -y wget
     wget https://bootstrap.pypa.io/get-pip.py
-    sudo python3.9 get-pip.py
+    sudo python3.11 get-pip.py
 else
     echo "Python is already installed."
 fi
 
 echo "Installing pip..."
-sudo python3.9 -m pip install --upgrade pip
+sudo python3.11 -m pip install --upgrade pip
+pip install uv
 
 echo "Installing dependencies..."
 pip install youtubedlapi-server-infusiblecoder --ignore-installed
-pip install yt-dlp --upgrade --ignore-installed
+pip install curl-cffi yt-dlp-ejs brotli websockets pycryptodomex mutagen
 
 echo "Configuring firewall..."
 sudo apt install -y ufw
@@ -73,7 +74,7 @@ fi
 
 # Start the server
 echo "Starting the server..."
-nohup uvicorn youtubedlapi_server_infusiblecoder.app:app_asgi --host 0.0.0.0 --port 5000 --workers 1 --log-level info &
+nohup uvicorn youtubedlapi_server_infusiblecoder.app:app --host 0.0.0.0 --port 9191 --workers 1 --log-level info &
 echo "Server started in background."
 
 echo "The setup is complete!"

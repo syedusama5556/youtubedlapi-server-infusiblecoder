@@ -7,7 +7,7 @@ SERVICE_LOG_DIR=${SERVICE_LOG_DIR:-"/var/log/youtubedlapi_server_logs"}
 
 
 stop_service_on_port() {
-  local port=5000
+  local port=9191
   local pids=$(lsof -t -i:$port -sTCP:LISTEN)
   if [[ ! -z "$pids" ]]; then
     echo "Stopping service(s) using port $port..."
@@ -21,7 +21,7 @@ stop_service_on_port() {
 create_stop_service_file() {
     cat <<EOF > /stop_service_on_port.sh
 #!/bin/bash
-port=5000
+port=9191
 pids=\$(lsof -t -i:\$port -sTCP:LISTEN)
 if [[ ! -z "\$pids" ]]; then
   echo "Stopping service(s) using port \$port..."
@@ -58,7 +58,7 @@ User=${SERVICE_USER}
 WorkingDirectory=/
 ExecStartPre=/bin/bash -c /stop_service_on_port.sh
 ExecStop=/bin/bash -c /stop_service_on_port.sh
-ExecStart=uvicorn youtubedlapi_server_infusiblecoder.app:app_asgi --host 0.0.0.0 --port 5000 --workers 4 --log-level info
+ExecStart=uvicorn youtubedlapi_server_infusiblecoder.app:app --host 0.0.0.0 --port 9191 --workers 4 --log-level info
 Restart=on-failure
 RestartSec=10s
 StartLimitInterval=300

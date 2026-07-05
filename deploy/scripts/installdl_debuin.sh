@@ -6,19 +6,21 @@ if ! command -v python3 &> /dev/null; then
     sudo apt update
     sudo apt install -y software-properties-common
     sudo add-apt-repository -y ppa:deadsnakes/ppa
-    sudo apt install -y python3.9
+    sudo apt install -y python3.11
     sudo apt install -y wget
     wget https://bootstrap.pypa.io/get-pip.py
-    sudo python3.9 get-pip.py
+    sudo python3.11 get-pip.py
 else
     echo "Python is already installed."
 fi
 
 echo "Installing pip..."
-sudo python3.9 -m pip install --upgrade pip --break-system-packages
+sudo python3.11 -m pip install --upgrade pip --break-system-packages
+pip install uv
 
 echo "Installing dependencies..."
 pip install youtubedlapi-server-infusiblecoder --ignore-installed --break-system-packages
+pip install curl-cffi yt-dlp-ejs brotli websockets pycryptodomex mutagen
 
 echo "Configuring firewall..."
 sudo apt install -y ufw
@@ -26,7 +28,6 @@ sudo ufw allow https
 sudo ufw allow http
 sudo ufw allow 80
 sudo ufw allow 9191
-sudo ufw allow 5000
 sudo ufw allow 22
 sudo ufw allow ssh
 sudo ufw --force enable

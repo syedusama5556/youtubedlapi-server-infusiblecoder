@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define your container name
-CONTAINER_NAME="removebg"
+CONTAINER_NAME="youtubedlapi_container"
 
 while true; do
     # Check if the container is running
