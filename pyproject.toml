@@ -51,3 +51,4 @@ include = ["youtubedlapi_server_infusiblecoder*"]
 [tool.flake8]
 exclude = ["gae", "docs", ".git", "__pycache__", "VENV"]
 ignore = ["E501"]
+

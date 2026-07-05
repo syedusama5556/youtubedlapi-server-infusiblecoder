@@ -26,3 +26,6 @@ __pycache__
 
 # Personal notes
 notes/
+
+# Environment variables (API keys, tokens)
+.env
